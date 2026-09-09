@@ -68,10 +68,24 @@ namespace BlogApi.Controllers
         {
             var connector = new MySqlConnection(ConnectionString);
             connector.Open();
-            var sql = $"UPDATE `blogger` SET `Name`=@name,`Email`=@email,`Age`=@age,`Password`=@password, WHERE 1";
+
+            var blgupdate = new Blogger
+            {
+                Name = blogger.Name,
+                Email = blogger.Email,
+                Age = blogger.Age,
+                Password = blogger.Password,
+            };
+
+            var sql = $"UPDATE `blogger` SET `Name`=@name,`Email`=@email,`Age`=@age,`Password`=@password, WHERE Name = @name,";
+            var cmd = new MySqlCommand(sql, connector);
+            cmd.Parameters.AddWithValue("@name", blgupdate.Name);
+            cmd.Parameters.AddWithValue("@email", blgupdate.Email);
+            cmd.Parameters.AddWithValue("@age", blgupdate.Age);
+            cmd.Parameters.AddWithValue("@password", blgupdate.Password);
             cmd.ExecuteNonQuery();
             connector.Close();
-            return null;
+            return blgupdate;
         }
         [HttpDelete]
         public object DeleteBlogger(int id)
