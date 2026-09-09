@@ -64,7 +64,7 @@ namespace BlogApi.Controllers
             return blg;
         }
         [HttpPut]
-        public AddUpdateDTO UpdateBlogger(int id, Blogger blogger)
+        public Blogger UpdateBlogger(AddUpdateDTO blogger, int id)
         {
             var connector = new MySqlConnection(ConnectionString);
             connector.Open();
@@ -77,8 +77,9 @@ namespace BlogApi.Controllers
                 Password = blogger.Password,
             };
 
-            var sql = $"UPDATE `blogger` SET `Name`=@name,`Email`=@email,`Age`=@age,`Password`=@password, WHERE Name = @name,";
+            var sql = $"UPDATE `blogger` SET `Name`=@name,`Email`=@email,`Age`=@age,`Password`=@password, WHERE Id = @id";
             var cmd = new MySqlCommand(sql, connector);
+            cmd.Parameters.AddWithValue(@"id", id);
             cmd.Parameters.AddWithValue("@name", blgupdate.Name);
             cmd.Parameters.AddWithValue("@email", blgupdate.Email);
             cmd.Parameters.AddWithValue("@age", blgupdate.Age);

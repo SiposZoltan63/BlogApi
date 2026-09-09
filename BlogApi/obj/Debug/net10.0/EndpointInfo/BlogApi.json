@@ -119,17 +119,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Blogger"
+                "$ref": "#/components/schemas/AddUpdateDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Blogger"
+                "$ref": "#/components/schemas/AddUpdateDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Blogger"
+                "$ref": "#/components/schemas/AddUpdateDTO"
               }
             }
           },
@@ -137,7 +137,24 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Blogger"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Blogger"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Blogger"
+                }
+              }
+            }
           }
         }
       },
@@ -170,6 +187,37 @@
   "components": {
     "schemas": {
       "AddBloggerDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "age": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "password": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AddUpdateDTO": {
         "type": "object",
         "properties": {
           "name": {
