@@ -1,6 +1,9 @@
 ﻿using BlogApi.Models;
+using BlogApi.Models.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MySqlConnector;
+using System.Security.Cryptography.X509Certificates;
 
 namespace BlogApi.Controllers
 {
@@ -8,15 +11,57 @@ namespace BlogApi.Controllers
     [ApiController]
     public class BloggerController : ControllerBase
     {
+        private readonly string ConnectionString = "server=localhost;database=blog;uid=root;password=";
+
         [HttpGet]
         public List<Blogger> GetAllBlogger()
         {
-            return null;
+            List<Blogger> bloggers = new();
+            var connector = new MySqlConnection(ConnectionString);
+            connector.Open();
+            string sql = "SELECT * FROM blogger";
+            var cmd = new MySqlCommand(sql,connector);
+            var datareader = cmd.ExecuteReader();
+            while (datareader.Read())
+            {
+                var blogger = new Blogger
+                {
+                    Id = datareader.GetInt32(0),
+                    Name = datareader.GetString(1),
+                    Email = datareader.GetString(2),
+                    Age = datareader.GetInt32(3),
+                    Password = datareader.GetString(4),
+                    RegistrationTime = datareader.GetDateTime(5)
+                };
+                bloggers.Add(blogger);
+            }
+            connector.Close();
+            return bloggers;
         }
         [HttpPost]
-        public object AddNewBlogger(Blogger blogger)
-        {
-            return null;
+        public Blogger AddNewBlogger(AddBloggerDTO blogger)
+        { 
+            var connector = new MySqlConnection(ConnectionString);
+            connector.Open();
+
+            var blg = new Blogger
+            {
+                Name = blogger.Name,
+                Email = blogger.Email,
+                Age = blogger.Age,
+                Password = blogger.Password,
+                RegistrationTime = DateTime.Now
+            };
+            var sql = $"INSERT INTO `blogger`(`Name`, `Email`, `Age`, `Password`, `RegistrationTime`) VALUES (@name,@email,@age,@password,@registrationtime)";
+            var cmd = new MySqlCommand(sql,connector);
+            cmd.Parameters.AddWithValue("@name", blg.Name);
+            cmd.Parameters.AddWithValue("@email", blg.Email);
+            cmd.Parameters.AddWithValue("@age", blg.Age);
+            cmd.Parameters.AddWithValue("@password", blg.Password);
+            cmd.Parameters.AddWithValue("@registrationtime", blg.RegistrationTime);
+            cmd.ExecuteNonQuery();
+            connector.Close();
+            return blg;
         }
         [HttpPut]
         public object UpdateBlogger(int id, Blogger blogger)
@@ -26,6 +71,10 @@ namespace BlogApi.Controllers
         [HttpDelete]
         public object DeleteBlogger(int id)
         {
+            var connector = new MySqlConnection(ConnectionString);
+            connector.Open();
+
+            connector.Close();
             return null;
         }
     }
