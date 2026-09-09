@@ -64,11 +64,11 @@ namespace BlogApi.Controllers
             return blg;
         }
         [HttpPut]
-        public Blogger UpdateBlogger(int id, Blogger blogger)
+        public AddUpdateDTO UpdateBlogger(int id, Blogger blogger)
         {
             var connector = new MySqlConnection(ConnectionString);
             connector.Open();
-            var sql = $"DELETE FROM blogger WHERE Id = @id";
+            var sql = $"UPDATE `blogger` SET `Name`=@name,`Email`=@email,`Age`=@age,`Password`=@password, WHERE 1";
             cmd.ExecuteNonQuery();
             connector.Close();
             return null;
