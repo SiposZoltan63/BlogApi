@@ -64,8 +64,13 @@ namespace BlogApi.Controllers
             return blg;
         }
         [HttpPut]
-        public object UpdateBlogger(int id, Blogger blogger)
+        public Blogger UpdateBlogger(int id, Blogger blogger)
         {
+            var connector = new MySqlConnection(ConnectionString);
+            connector.Open();
+            var sql = $"DELETE FROM blogger WHERE Id = @id";
+            cmd.ExecuteNonQuery();
+            connector.Close();
             return null;
         }
         [HttpDelete]
@@ -73,9 +78,12 @@ namespace BlogApi.Controllers
         {
             var connector = new MySqlConnection(ConnectionString);
             connector.Open();
-
+            var sql = $"DELETE FROM blogger WHERE Id = @id";
+            var cmd = new MySqlCommand(sql,connector);
+            cmd.Parameters.AddWithValue(@"id", id);
+            cmd.ExecuteNonQuery();
             connector.Close();
-            return null;
+            return new { message = "Sikeres törlés" };
         }
     }
 }
