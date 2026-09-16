@@ -46,13 +46,17 @@ namespace BlogApi.Controllers
             {
                 Title = blogposts.Title,
                 Content = blogposts.Content,
-                postTime = DateTime.Now
+                postTime = DateTime.Now,
+                updateTime = DateTime.Now,
+                blogId = blogposts.blogId
             };
-            var sql = $"INSERT INTO `blogpost`(`Title`, `Content`, `postTime` ) VALUES (@title,@content,@posttime)";
+            var sql = $"INSERT INTO `blogpost`(`Title`, `Content`, `postTime`, `updateTime`, `blogId`) VALUES (@title,@content,@posttime,@updatetime,@blogid)";
             var cmd = new MySqlCommand(sql, connector);
             cmd.Parameters.AddWithValue("@title", blgpost.Title);
             cmd.Parameters.AddWithValue("@content", blgpost.Content);
             cmd.Parameters.AddWithValue("@posttime", blgpost.postTime);
+            cmd.Parameters.AddWithValue("@updatetime", blgpost.updateTime);
+            cmd.Parameters.AddWithValue("@blogid", blgpost.blogId);
             cmd.ExecuteNonQuery();
             connector.Close();
             return blgpost;
