@@ -121,13 +121,13 @@ namespace BlogApi.Controllers
             return blogger;
         }
         [HttpGet("bloggerowenpost")]
-        public object GetBloggerWithPost(int id)
+        public List<object> GetBloggerWithPost(int id)
         {
             List<object> ownpost = new List<object>();
             var connector = new MySqlConnection(ConnectionString);
             connector.Open();
 
-            var sql = $"SELECT Blogger.Name,Blogpost.Title,Blogpost.Content, FROM `blogger` INNER JOIN Blogpost ON Blogger.Id = Blogpost.blogId WHERE Blogger.`Id` = @id;";
+            var sql = $"SELECT blogger.Name,blogpost.Title,blogpost.Content, FROM `blogger` INNER JOIN blogpost ON blogger.Id = blogpost.blogId WHERE blogger.`Id` = @id;";
             var cmd = new MySqlCommand(sql, connector);
             cmd.Parameters.AddWithValue(@"id", id);
 
@@ -154,6 +154,31 @@ namespace BlogApi.Controllers
             var db = cmd.ExecuteScalar();
             connector.Close();
             return new { message = $"Posztok száma: {db}"};
+        }
+
+        [HttpGet("BloggerPostNumber")]
+        public object BloggerPostNumber(int id)
+        {
+            var connector = new MySqlConnection(ConnectionString);
+            connector.Open();
+            var sql = $"SELECT blogger.Name, COUNT(*) FROM `blogger` INNER JOIN blogpost ON blogger.Id = blogpost.blogId GROUP BY blogger.Id HAVING `Id` = @id;";
+            var cmd = new MySqlCommand(sql, connector);
+            cmd.Parameters.AddWithValue(@"id", id);
+            var datareader = cmd.ExecuteReader();
+            if (datareader.Read() == true)
+            {
+                var BloggerPostNumber = new
+                {
+                    Name = datareader.GetString(0),
+                    NumberOfPosts = datareader.GetInt32(1),
+                };
+                connector.Close();
+                return BloggerPostNumber;
+            }
+            else 
+            {
+                return null;
+            }
         }
     }
 }
