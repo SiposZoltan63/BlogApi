@@ -127,7 +127,7 @@ namespace BlogApi.Controllers
             var connector = new MySqlConnection(ConnectionString);
             connector.Open();
 
-            var sql = $"SELECT blogger.Name,blogpost.Title,blogpost.Content, FROM `blogger` INNER JOIN blogpost ON blogger.Id = blogpost.blogId WHERE blogger.`Id` = @id;";
+            var sql = $"SELECT blogger.Name, blogpost.Title, blogpost.Content FROM `blogger` INNER JOIN blogpost ON blogger.Id = blogpost.blogId WHERE blogger.`Id` = @id;";
             var cmd = new MySqlCommand(sql, connector);
             cmd.Parameters.AddWithValue(@"id", id);
 
