@@ -123,23 +123,37 @@ namespace BlogApi.Controllers
         [HttpGet("bloggerowenpost")]
         public object GetBloggerWithPost(int id)
         {
+            List<object> ownpost = new List<object>();
             var connector = new MySqlConnection(ConnectionString);
             connector.Open();
 
-            var sql = $"SELECT Blogger.Name,Blogpost.Title,Blogpost.Content, FROM `blogger` INNER JOIN Blogpost";
+            var sql = $"SELECT Blogger.Name,Blogpost.Title,Blogpost.Content, FROM `blogger` INNER JOIN Blogpost ON Blogger.Id = Blogpost.blogId WHERE Blogger.`Id` = @id;";
             var cmd = new MySqlCommand(sql, connector);
             cmd.Parameters.AddWithValue(@"id", id);
 
             var datareader = cmd.ExecuteReader();
-            datareader.Read();
-            var blogger = new
+            while (datareader.Read())
             {
-                Name = datareader.GetString(0),
-                Title = datareader.GetString(1),
-                Content = datareader.GetString(1),
+                var bloggerOwnPosts = new
+                {
+                    Name = datareader.GetString(0),
+                    Title = datareader.GetString(1),
+                    Content = datareader.GetString(1),
+                };
             };
             connector.Close();
-            return blogger;
+            return ownpost;
+        }
+        [HttpGet("Numberofposts")]
+        public object GetNumberofposts() 
+        {
+            var connector = new MySqlConnection(ConnectionString);
+            connector.Open();
+            var sql = $"SELECT COUNT(*) FROM blogpost";
+            var cmd = new MySqlCommand(sql,connector);
+            var db = cmd.ExecuteScalar();
+            connector.Close();
+            return new { message = $"Posztok száma: {db}"};
         }
     }
 }
