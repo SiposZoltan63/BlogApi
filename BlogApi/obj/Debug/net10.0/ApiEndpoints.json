@@ -54,19 +54,19 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "blogger",
-        "Type": "BlogApi.Models.DTOs.AddUpdateDTO",
-        "IsRequired": true
-      },
-      {
         "Name": "id",
         "Type": "System.Int32",
         "IsRequired": false
+      },
+      {
+        "Name": "addUpdateDTO",
+        "Type": "BlogApi.Models.DTOs.AddUpdateDTO",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "BlogApi.Models.Blogger",
+        "Type": "BlogApi.Models.DTOs.AddUpdateDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",

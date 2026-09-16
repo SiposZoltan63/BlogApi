@@ -64,29 +64,29 @@ namespace BlogApi.Controllers
             return blg;
         }
         [HttpPut]
-        public Blogger UpdateBlogger(AddUpdateDTO blogger, int id)
+        public AddUpdateDTO UpdateBlogger([FromQuery]int id,[FromBody]AddUpdateDTO addUpdateDTO)
         {
             var connector = new MySqlConnection(ConnectionString);
             connector.Open();
 
-            var blgupdate = new Blogger
-            {
-                Name = blogger.Name,
-                Email = blogger.Email,
-                Age = blogger.Age,
-                Password = blogger.Password,
-            };
-
-            var sql = $"UPDATE `blogger` SET `Name`=@name,`Email`=@email,`Age`=@age,`Password`=@password, WHERE Id = @id";
+            string sql = $"UPDATE `blogger` SET `Name`=@name,`Email`=@email,`Age`=@age,`Password`=@password  WHERE `Id` = @id;";
             var cmd = new MySqlCommand(sql, connector);
             cmd.Parameters.AddWithValue(@"id", id);
-            cmd.Parameters.AddWithValue("@name", blgupdate.Name);
-            cmd.Parameters.AddWithValue("@email", blgupdate.Email);
-            cmd.Parameters.AddWithValue("@age", blgupdate.Age);
-            cmd.Parameters.AddWithValue("@password", blgupdate.Password);
+            cmd.Parameters.AddWithValue("@name", addUpdateDTO.Name);
+            cmd.Parameters.AddWithValue("@email", addUpdateDTO.Email);
+            cmd.Parameters.AddWithValue("@age", addUpdateDTO.Age);
+            cmd.Parameters.AddWithValue("@password", addUpdateDTO.Password);
             cmd.ExecuteNonQuery();
+
+            var updatedBlogger = new AddUpdateDTO
+            {
+                Name = addUpdateDTO.Name,
+                Email = addUpdateDTO.Email,
+                Age = addUpdateDTO.Age,
+                Password = addUpdateDTO.Password,
+            };
             connector.Close();
-            return blgupdate;
+            return updatedBlogger;
         }
         [HttpDelete]
         public object DeleteBlogger(int id)
