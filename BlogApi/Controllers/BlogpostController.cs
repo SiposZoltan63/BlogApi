@@ -67,20 +67,19 @@ namespace BlogApi.Controllers
             var connector = new MySqlConnection(ConnectionString);
             connector.Open();
 
-            var updatedBlogpost = new addblogpostupdateDTO
-            {
-                Title = addblogpostupdateDTO.Title,
-                Content = addblogpostupdateDTO.Content,
-                //updateTime = DateTime.Now,
-            };
-
-            string sql = $"UPDATE `blogger` SET `Title`=@title,`Content`=@content, WHERE `Id` = @id;";
+            string sql = $"UPDATE `blogpost` SET `Title`=@title,`Content`=@content, `updateTime` =@updatetime WHERE `Id` = @id;";
             var cmd = new MySqlCommand(sql, connector);
             cmd.Parameters.AddWithValue(@"id", id);
             cmd.Parameters.AddWithValue("@title", addblogpostupdateDTO.Title);
             cmd.Parameters.AddWithValue("@content", addblogpostupdateDTO.Content);
-            //cmd.Parameters.AddWithValue("@updatetime", updatedBlogpost.updateTime);
+            cmd.Parameters.AddWithValue("@updatetime", DateTime.Now);
             cmd.ExecuteNonQuery();
+
+            var updatedBlogpost = new addblogpostupdateDTO
+            {
+                Title = addblogpostupdateDTO.Title,
+                Content = addblogpostupdateDTO.Content,
+            };
             connector.Close();
             return updatedBlogpost;
         }

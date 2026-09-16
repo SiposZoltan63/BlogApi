@@ -93,6 +93,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "BlogApi.Controllers.BloggerController",
+    "Method": "GetBloggerById",
+    "RelativePath": "api/Blogger/byId",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "BlogApi.Controllers.BlogpostController",
     "Method": "GetallBloggerposts",
     "RelativePath": "api/Blogpost",

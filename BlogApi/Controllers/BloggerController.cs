@@ -100,5 +100,46 @@ namespace BlogApi.Controllers
             connector.Close();
             return new { message = "Sikeres törlés" };
         }
+        [HttpGet("byId")]
+        public object GetBloggerById(int id) 
+        {
+            var connector = new MySqlConnection(ConnectionString);
+            connector.Open();
+
+            var sql = $"SELECT `Name`, `Email` FROM `blogger` WHERE `Id` = @id;";
+            var cmd = new MySqlCommand(sql, connector);
+            cmd.Parameters.AddWithValue(@"id", id);
+
+            var datareader = cmd.ExecuteReader();
+            datareader.Read();
+            var blogger = new
+            {
+                Name = datareader.GetString(0),
+                Email = datareader.GetString(1),
+            };
+            connector.Close();
+            return blogger;
+        }
+        [HttpGet("bloggerowenpost")]
+        public object GetBloggerWithPost(int id)
+        {
+            var connector = new MySqlConnection(ConnectionString);
+            connector.Open();
+
+            var sql = $"SELECT Blogger.Name,Blogpost.Title,Blogpost.Content, FROM `blogger` INNER JOIN Blogpost";
+            var cmd = new MySqlCommand(sql, connector);
+            cmd.Parameters.AddWithValue(@"id", id);
+
+            var datareader = cmd.ExecuteReader();
+            datareader.Read();
+            var blogger = new
+            {
+                Name = datareader.GetString(0),
+                Title = datareader.GetString(1),
+                Content = datareader.GetString(1),
+            };
+            connector.Close();
+            return blogger;
+        }
     }
 }
