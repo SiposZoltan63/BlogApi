@@ -1,0 +1,96 @@
+﻿using BlogApi.Models;
+using BlogApi.Models.DTOs;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using MySqlConnector;
+
+namespace BlogApi.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BlogpostController : ControllerBase
+    {
+        private readonly string ConnectionString = "server=localhost;database=blog;uid=root;password=";
+
+        [HttpGet]
+        public List<Blogpost> GetallBloggerposts()
+        {
+            List<Blogpost> bloggerposts = new();
+            var connector = new MySqlConnection(ConnectionString);
+            connector.Open();
+            string sql = "SELECT * FROM blogpost";
+            var cmd = new MySqlCommand(sql, connector);
+            var datareader = cmd.ExecuteReader();
+            while (datareader.Read())
+            {
+                var posts = new Blogpost
+                {
+                    Id = datareader.GetInt32(0),
+                    Title = datareader.GetString(1),
+                    Content = datareader.GetString(2),
+                    postTime = datareader.GetDateTime(3),
+                    updateTime = datareader.GetDateTime(4),
+                };
+                bloggerposts.Add(posts);
+            }
+            connector.Close();
+            return bloggerposts;
+        }
+        [HttpPost]
+        public Blogpost AddNewBlogpost(AddblogpostDTO blogposts)
+        {
+            var connector = new MySqlConnection(ConnectionString);
+            connector.Open();
+
+            var blgpost = new Blogpost
+            {
+                Title = blogposts.Title,
+                Content = blogposts.Content,
+                postTime = DateTime.Now
+            };
+            var sql = $"INSERT INTO `blogpost`(`Title`, `Content`, `postTime` ) VALUES (@title,@content,@posttime)";
+            var cmd = new MySqlCommand(sql, connector);
+            cmd.Parameters.AddWithValue("@title", blgpost.Title);
+            cmd.Parameters.AddWithValue("@content", blgpost.Content);
+            cmd.Parameters.AddWithValue("@posttime", blgpost.postTime);
+            cmd.ExecuteNonQuery();
+            connector.Close();
+            return blgpost;
+        }
+        [HttpPut]
+        public addblogpostupdateDTO UpdateBlogpost([FromQuery] int id, [FromBody] addblogpostupdateDTO addblogpostupdateDTO)
+        {
+            var connector = new MySqlConnection(ConnectionString);
+            connector.Open();
+
+            var updatedBlogpost = new addblogpostupdateDTO
+            {
+                Title = addblogpostupdateDTO.Title,
+                Content = addblogpostupdateDTO.Content,
+                //updateTime = DateTime.Now,
+            };
+
+            string sql = $"UPDATE `blogger` SET `Title`=@title,`Content`=@content, WHERE `Id` = @id;";
+            var cmd = new MySqlCommand(sql, connector);
+            cmd.Parameters.AddWithValue(@"id", id);
+            cmd.Parameters.AddWithValue("@title", addblogpostupdateDTO.Title);
+            cmd.Parameters.AddWithValue("@content", addblogpostupdateDTO.Content);
+            //cmd.Parameters.AddWithValue("@updatetime", updatedBlogpost.updateTime);
+            cmd.ExecuteNonQuery();
+            connector.Close();
+            return updatedBlogpost;
+        }
+        [HttpDelete]
+        public object DeleteBlogpost(int id)
+        {
+            var connector = new MySqlConnection(ConnectionString);
+            connector.Open();
+            var sql = $"DELETE FROM blogpost WHERE Id = @id";
+            var cmd = new MySqlCommand(sql, connector);
+            cmd.Parameters.AddWithValue(@"id", id);
+            cmd.ExecuteNonQuery();
+            connector.Close();
+            return new { message = "Sikeres törlés" };
+        }
+    }
+}
